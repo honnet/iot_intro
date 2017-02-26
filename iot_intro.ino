@@ -8,6 +8,7 @@
 
 typedef enum color_e {RED, GREEN, BLUE, YELLOW, OFF} color_t;
 const int RGBpins[] = {D8, D6, D7};
+const int debugLEDpin = D4;
 
 /*****Initialization*****/
 ESP8266WebServer server(80);
@@ -33,6 +34,8 @@ void handleRoot() {
 
 /****Manage LEDs****/
 void handleLEDs() {
+    digitalWrite(debugLEDpin, LOW);  // (inverted logic)
+
     String color_str;
     if ( server.hasArg("toggle") ) {
         color_str = server.arg(0);
@@ -45,6 +48,8 @@ void handleLEDs() {
     String answer = handleRootHTML;
     answer.replace("No", color_str);
     server.send(200, "text/html", answer);
+
+    digitalWrite(debugLEDpin, HIGH); // (inverted logic)
 }
 
 /****Setups****/
@@ -92,8 +97,7 @@ void setupMDNS() {
 }
 
 void setup() {
-    pinMode(BUILTIN_LED, OUTPUT);
-    digitalWrite(BUILTIN_LED, LOW); // = ON (inverted logic)
+    pinMode(debugLEDpin, OUTPUT);
 
     for (int i=0; i<3; i++)
         pinMode(RGBpins[i], OUTPUT);
