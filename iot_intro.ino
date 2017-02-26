@@ -7,6 +7,7 @@
 #include <ESP8266mDNS.h>          //Allow custom URL
 
 typedef enum color_e {RED, GREEN, BLUE, YELLOW, OFF} color_t;
+const int RGBpins[] = {D8, D6, D7};
 
 /*****Initialization*****/
 ESP8266WebServer server(80);
@@ -91,11 +92,11 @@ void setupMDNS() {
 }
 
 void setup() {
-    pinMode(D8, OUTPUT); // Red
-    pinMode(D6, OUTPUT); // Green
-    pinMode(D7, OUTPUT); // Blue
     pinMode(BUILTIN_LED, OUTPUT);
     digitalWrite(BUILTIN_LED, LOW); // = ON (inverted logic)
+
+    for (int i=0; i<3; i++)
+        pinMode(RGBpins[i], OUTPUT);
 
     Serial.begin(115200);
 
@@ -117,46 +118,35 @@ void loop() {
 }
 
 /****LEDs****/
+bool RGBstates[3];
+const float RGBintensities[] = {0xFF, 0xFF*0.3, 0xFF*0.6};
+
 void LEDtoggle(char color) {
+    int i = 0;
     switch (color) {
-        case 'r' :
-            digitalWrite(D8, !digitalRead(D8));
-            break;
-        case 'g' :
-            digitalWrite(D6, !digitalRead(D6));
-            break;
-        case 'b' :
-            digitalWrite(D7, !digitalRead(D7));
-            break;
+        case 'R' : i = 0; break;
+        case 'G' : i = 1; break;
+        case 'B' : i = 2; break;
         default:
             Serial.print("LEDtoggle() switch failed!");
+            return;
     }
+    RGBstates[i] ^= 1; // toggle
+    analogWrite(RGBpins[i], RGBstates[i]*RGBintensities[i]);
 }
 
 void LEDfeedback(color_t color) {
-    bool R, G, B;
-
     switch (color) {
-        case RED :
-            R=1; G=0; B=0;
-            break;
-        case GREEN :
-            R=0; G=1; B=0;
-            break;
-        case BLUE :
-            R=0; G=0; B=1;
-            break;
-        case YELLOW :
-            R=1; G=1; B=0;
-            break;
-        case OFF :
-            R=0; G=0; B=0;
-            break;
+        case RED :    RGBstates[0]=1; RGBstates[1]=0; RGBstates[2]=0; break;
+        case GREEN :  RGBstates[0]=0; RGBstates[1]=1; RGBstates[2]=0; break;
+        case BLUE :   RGBstates[0]=0; RGBstates[1]=0; RGBstates[2]=1; break;
+        case YELLOW : RGBstates[0]=1; RGBstates[1]=1; RGBstates[2]=0; break;
+        case OFF :    RGBstates[0]=0; RGBstates[1]=0; RGBstates[2]=0; break;
         default:
             Serial.print("LEDfeedback() switch failed!");
+            return;
     }
-    digitalWrite(D8, R);
-    digitalWrite(D6, G);
-    digitalWrite(D7, B);
+    for (int i=0; i<3; i++)
+        analogWrite(RGBpins[i], RGBstates[i]*RGBintensities[i]);
 }
 
