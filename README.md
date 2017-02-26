@@ -46,6 +46,24 @@ Or make a udev file:
     echo $RULES | sudo tee /etc/udev/rules.d/30-HL-340.rules
     sudo restart udev
 
+### .local address doesn't work
 
-### TODO...
+If you are using a smartphone, the .local URL might not work.
+Use the serial port display to get the IP address.
+
+If you are using linux or windows, you might need to install these requirements:
+
+https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266mDNS#requirements
+
+
+## TODO
+
+### .local experimentations:
+
+After a successful connection to the AP, we don't know the IP address of the ESP module.
+The MDNS solution doesn't work on every system but different alternatives are possible.
+
+The ESP module could broadcast its IP or send it to the MAC address of the phone that just parametered it.
+
+It could also publish it on a server with its MAC address (see cloud solutions such as mydevices.com).
 
