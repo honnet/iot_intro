@@ -16,26 +16,35 @@ const char *ssid = "iot_intro";
 
 /*****WebPage*****/
 // Warning: only use simple quotes in the html (no double)
-String handleRootHTML = "\
+String rootHTML = "\
 <!doctype html> <html> <head> <title> IoT into </title> </head> <body>\
+<br> <br> Analog input: xxx V (<a href='/'>refresh<a>)\
 <form method='get' action='/set'>\
   <br><br> <button type='submit' name='toggle' value='Red'>  Toggle Red LED  </button>\
   <br><br> <button type='submit' name='toggle' value='Green'>Toggle Green LED</button>\
   <br><br> <button type='submit' name='toggle' value='Blue'> Toggle Blue LED </button>\
 </form>\
 <br> No LED changed.\
-<br> <a href='/'>home<a>\
 </body> </html>\
 ";
 
+String getHTML() {
+    digitalWrite(debugLEDpin, LOW);  // (inverted logic)
+
+    String updatedRootHTML = rootHTML;
+    String voltage = String(analogRead(A0) * 3. / 1024.);
+    updatedRootHTML.replace("xxx", voltage);
+
+    digitalWrite(debugLEDpin, HIGH); // (inverted logic)
+    return updatedRootHTML;
+}
+
 void handleRoot() {
-    server.send(200, "text/html", handleRootHTML);
+    server.send(200, "text/html", getHTML());
 }
 
 /****Manage LEDs****/
 void handleLEDs() {
-    digitalWrite(debugLEDpin, LOW);  // (inverted logic)
-
     String color_str;
     if ( server.hasArg("toggle") ) {
         color_str = server.arg(0);
@@ -45,11 +54,9 @@ void handleLEDs() {
         server.send(404, "text/plain", "Bad URL.");
         return;
     }
-    String answer = handleRootHTML;
+    String answer = getHTML();
     answer.replace("No", color_str);
     server.send(200, "text/html", answer);
-
-    digitalWrite(debugLEDpin, HIGH); // (inverted logic)
 }
 
 /****Setups****/
@@ -98,6 +105,7 @@ void setupMDNS() {
 
 void setup() {
     pinMode(debugLEDpin, OUTPUT);
+    digitalWrite(debugLEDpin, HIGH);  // (inverted logic)
 
     for (int i=0; i<3; i++)
         pinMode(RGBpins[i], OUTPUT);
@@ -113,7 +121,8 @@ void setup() {
     setupMDNS();
 
     Serial.println("Setup OK.");
-    LEDfeedback(GREEN); // state feedback
+    LEDfeedback(OFF); // ready
+    digitalWrite(debugLEDpin, LOW);  // (inverted logic)
 }
 
 /****Loop****/

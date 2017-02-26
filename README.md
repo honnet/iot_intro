@@ -1,6 +1,6 @@
 # IoT intro
 
-In this project we control LEDs from a web interface using an ESP8266.
+In this project we control LEDs and display analog voltages using a web interface and an ESP8266.
 
 ## Dependencies
 
