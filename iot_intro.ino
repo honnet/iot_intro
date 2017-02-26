@@ -11,19 +11,39 @@ typedef enum color_e {RED, GREEN, BLUE, YELLOW, OFF} color_t;
 /*****Initialization*****/
 ESP8266WebServer server(80);
 const char *ssid = "iot_intro";
-void handleRoot(); // implemented below
+
+/*****WebPage*****/
+// Warning: only use simple quotes in the html (no double)
+String handleRootHTML = "\
+<!doctype html> <html> <head> <title> IoT into </title> </head> <body>\
+<form method='get' action='/set'>\
+  <br><br> <button type='submit' name='toggle' value='Red'>  Toggle Red LED  </button>\
+  <br><br> <button type='submit' name='toggle' value='Green'>Toggle Green LED</button>\
+  <br><br> <button type='submit' name='toggle' value='Blue'> Toggle Blue LED </button>\
+</form>\
+<br> No LED changed.\
+<br> <a href='/'>home<a>\
+</body> </html>\
+";
+
+void handleRoot() {
+    server.send(200, "text/html", handleRootHTML);
+}
 
 /****Manage LEDs****/
 void handleLEDs() {
+    String color_str;
     if ( server.hasArg("toggle") ) {
-        String str = server.arg(0);
-        LEDtoggle(str[0]);
+        color_str = server.arg(0);
+        LEDtoggle(color_str[0]);
     } else {
         Serial.println("Bad URL.");
         server.send(404, "text/plain", "Bad URL.");
         return;
     }
-    server.send(200, "text/plain", ""); // empty response as ACK to GET request.
+    String answer = handleRootHTML;
+    answer.replace("No", color_str);
+    server.send(200, "text/html", answer);
 }
 
 /****Setups****/
@@ -140,23 +160,3 @@ void LEDfeedback(color_t color) {
     digitalWrite(D7, B);
 }
 
-
-/*****WebPage*****/
-// Warning: only use simple quotes in the html (no double)
-String handleRootHTML = "\
-<!doctype html>\
-<html>\
-<head> <title> IoT into </title> </head>\
-<body>\
-<form method='get' action='/set'>\
-  <br><br> <button type='submit' name='toggle' formtarget='_blank' value='r'>toggle RED  </button>\
-  <br><br> <button type='submit' name='toggle' formtarget='_blank' value='g'>toggle GREEN</button>\
-  <br><br> <button type='submit' name='toggle' formtarget='_blank' value='b'>toggle BLUE </button>\
-</form>\
-</body>\
-</html>\
-";
-
-void handleRoot() {
-    server.send(200, "text/html", handleRootHTML);
-}
