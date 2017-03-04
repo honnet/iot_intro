@@ -6,22 +6,22 @@ In this project we control LEDs and display analog voltages using a web interfac
 
 ESP8266 Arduino:
 
-https://github.com/esp8266/Arduino
+https://github.com/esp8266/Arduino#installing-with-boards-manager
 
 WiFiManager - WiFi Configuration Magic:
 
-https://github.com/tzapu/WiFiManager
-
+https://github.com/tzapu/WiFiManager#installing
 
 ## Usage
 
-1st time:
-  * program the ESP with the arduino IDE (the 1st link should have every details needed)
+### 1st time
+  * program the ESP with the arduino IDE using "Wemos D1" as board (more
+explanations available [here](https://github.com/esp8266/Arduino)
   * connect your phone/computer to your the wifi network called 'iot_intro'
   * go to the following URL with your browser: http://192.168.4.1/
   * set the ESP to connect to your favorite network (set the SSID and password)
 
-Then:
+### ...then
   * your phone/computer should connect back to your favorite network
   * put the following URL in your browser, the rest should be intuitive:
 
@@ -30,6 +30,9 @@ Then:
 Note: If you need to change the password, uncomment the follwing line in the .ino file:
 
     wifiManager.resetSettings();
+
+### Documentation
+https://github.com/esp8266/Arduino/tree/master/doc/esp8266wifi#table-of-contents
 
 
 ## Potential problems
