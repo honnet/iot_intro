@@ -2,6 +2,11 @@
 
 In this project we control LEDs and display analog voltages using a web interface and an ESP8266.
 
+This wiki gives a few steps to approach this introduction:
+
+https://github.com/honnet/iot_intro/wiki/IOT-Intro
+
+
 ## Dependencies
 
 ESP8266 Arduino:
@@ -11,6 +16,7 @@ https://github.com/esp8266/Arduino#installing-with-boards-manager
 WiFiManager - WiFi Configuration Magic:
 
 https://github.com/tzapu/WiFiManager#installing
+
 
 ## Usage
 
